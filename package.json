@@ -4,7 +4,6 @@
   "private": true,
   "scripts": {
     "build": "prisma generate && next build",
-    "build": "next build",
     "start": "next start",
     "lint": "eslint"
   },
