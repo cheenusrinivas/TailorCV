@@ -7,7 +7,13 @@ const prisma = new PrismaClient()
 
 export const { handlers, signIn, signOut, auth } = NextAuth({
   adapter: PrismaAdapter(prisma),
-  providers: [Google],
+  providers: [
+    Google({
+      clientId: process.env.AUTH_GOOGLE_ID,
+      clientSecret: process.env.AUTH_GOOGLE_SECRET,
+    })
+  ],
+  secret: process.env.AUTH_SECRET,
   session: { strategy: "database" },
   callbacks: {
     async session({ session, user }) {
