@@ -11,9 +11,15 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
     Google({
       clientId: process.env.AUTH_GOOGLE_ID,
       clientSecret: process.env.AUTH_GOOGLE_SECRET,
+      authorization: {
+        params: {
+          redirect_uri: `${process.env.NEXTAUTH_URL}/api/auth/callback/google`
+        }
+      }
     })
   ],
   secret: process.env.AUTH_SECRET,
+  trustHost: true,
   session: { strategy: "database" },
   callbacks: {
     async session({ session, user }) {
