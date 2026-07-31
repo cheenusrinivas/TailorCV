@@ -58,7 +58,7 @@ export default async function DashboardPage() {
                 Paste a job description and get your tailored CV in seconds.
               </p>
               
-                <a vhref="/analyse"
+                <a href="/analyse"
                 className="inline-block bg-blue-600 hover:bg-blue-500 text-white font-bold px-8 py-3 rounded-xl transition-colors"
               >
                 Analyse a Job →
