@@ -10,6 +10,8 @@ const inter = Inter({
 export const metadata: Metadata = {
   title: "TailorCV — AI-Powered CV Tailoring",
   description: "Upload your CV once. Paste any job description. Get a tailored CV, cover letter and match score in seconds — powered by AI.",
+  icons: {
+    icon: '/icon.svg',}
 }
 
 export default function RootLayout({

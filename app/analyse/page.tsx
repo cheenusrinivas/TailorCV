@@ -16,11 +16,8 @@ export default function AnalysePage() {
       setError('Please fill in the job title and description')
       return
     }
-
     setLoading(true)
     setError('')
-
-    console.log('Sending request...')
 
     const res = await fetch('/api/analyse', {
       method: 'POST',
@@ -28,16 +25,12 @@ export default function AnalysePage() {
       body: JSON.stringify({ jobTitle, companyName, jobDescription }),
     })
 
-    console.log('Response status:', res.status)
-
     const text = await res.text()
-    console.log('Raw response:', text)
-
     let data
     try {
       data = JSON.parse(text)
     } catch {
-      setError(`Server error: ${text.slice(0, 200)}`)
+      setError('Server error. Please try again.')
       setLoading(false)
       return
     }
@@ -51,70 +44,100 @@ export default function AnalysePage() {
   }
 
   return (
-    <div className="min-h-screen bg-black text-white">
-      <nav className="border-b border-zinc-800 px-6 py-4 flex justify-between items-center">
-        <a href="/dashboard" className="text-xl font-black">
-          Tailor<span className="text-blue-500">CV</span>
+    <div style={{ minHeight: '100vh', background: '#fafafa', color: '#0a0a0a' }}>
+
+      {/* Navbar */}
+      <nav style={{ background: '#fff', borderBottom: '1px solid #f0f0f0', padding: '0 32px', display: 'flex', justifyContent: 'space-between', alignItems: 'center', height: '60px' }}>
+        <a href="/dashboard" style={{ fontWeight: 800, fontSize: '18px', letterSpacing: '-0.5px', textDecoration: 'none', color: '#0a0a0a' }}>
+          Tailor<span style={{ color: '#2563eb' }}>CV</span>
         </a>
-        <a href="/dashboard" className="text-xs text-zinc-400 hover:text-white transition-colors">
+        <a href="/dashboard" style={{ fontSize: '13px', color: '#666', textDecoration: 'none' }}>
           ← Back to dashboard
         </a>
       </nav>
 
-      <div className="max-w-3xl mx-auto px-6 py-12">
-        <div className="mb-10">
-          <h1 className="text-3xl font-black mb-2">Analyse a Job</h1>
-          <p className="text-zinc-400">Paste the job description and we'll tailor your CV to match it perfectly.</p>
+      <div style={{ maxWidth: '680px', margin: '0 auto', padding: '48px 24px' }}>
+
+        {/* Header */}
+        <div style={{ marginBottom: '32px' }}>
+          <h1 style={{ fontSize: '28px', fontWeight: 800, letterSpacing: '-1px', marginBottom: '8px' }}>
+            Analyse a Job
+          </h1>
+          <p style={{ color: '#666', fontSize: '15px' }}>
+            Paste the job description and we'll tailor your CV to match it perfectly.
+          </p>
         </div>
 
-        <div className="space-y-6">
+        {/* Form */}
+        <div style={{ background: '#fff', border: '1px solid #f0f0f0', borderRadius: '16px', padding: '32px', display: 'flex', flexDirection: 'column', gap: '20px' }}>
+
           <div>
-            <label className="block text-sm font-semibold text-zinc-300 mb-2">Job Title *</label>
+            <label style={{ display: 'block', fontSize: '14px', fontWeight: 600, marginBottom: '8px', color: '#0a0a0a' }}>
+              Job Title *
+            </label>
             <input
               type="text"
               value={jobTitle}
               onChange={(e) => setJobTitle(e.target.value)}
               placeholder="e.g. Full Stack Engineer"
-              style={{ width: '100%', background: '#18181b', border: '1px solid #3f3f46', borderRadius: '12px', padding: '12px 16px', color: '#fff', fontSize: '14px', outline: 'none' }}
+              style={{ width: '100%', border: '1px solid #e8e8e8', borderRadius: '10px', padding: '12px 16px', fontSize: '15px', outline: 'none', background: '#fafafa', color: '#0a0a0a' }}
             />
           </div>
 
           <div>
-            <label className="block text-sm font-semibold text-zinc-300 mb-2">Company Name <span className="text-zinc-500 font-normal">(optional)</span></label>
+            <label style={{ display: 'block', fontSize: '14px', fontWeight: 600, marginBottom: '8px', color: '#0a0a0a' }}>
+              Company Name <span style={{ color: '#999', fontWeight: 400 }}>(optional)</span>
+            </label>
             <input
               type="text"
               value={companyName}
               onChange={(e) => setCompanyName(e.target.value)}
               placeholder="e.g. Google"
-              style={{ width: '100%', background: '#18181b', border: '1px solid #3f3f46', borderRadius: '12px', padding: '12px 16px', color: '#fff', fontSize: '14px', outline: 'none' }}
+              style={{ width: '100%', border: '1px solid #e8e8e8', borderRadius: '10px', padding: '12px 16px', fontSize: '15px', outline: 'none', background: '#fafafa', color: '#0a0a0a' }}
             />
           </div>
 
           <div>
-            <label className="block text-sm font-semibold text-zinc-300 mb-2">Job Description *</label>
+            <label style={{ display: 'block', fontSize: '14px', fontWeight: 600, marginBottom: '8px', color: '#0a0a0a' }}>
+              Job Description *
+            </label>
             <textarea
               value={jobDescription}
               onChange={(e) => setJobDescription(e.target.value)}
               placeholder="Paste the full job description here..."
               rows={12}
-              style={{ width: '100%', background: '#18181b', border: '1px solid #3f3f46', borderRadius: '12px', padding: '12px 16px', color: '#fff', fontSize: '14px', outline: 'none', resize: 'vertical' }}
+              style={{ width: '100%', border: '1px solid #e8e8e8', borderRadius: '10px', padding: '12px 16px', fontSize: '15px', outline: 'none', background: '#fafafa', color: '#0a0a0a', resize: 'vertical', fontFamily: 'inherit' }}
             />
-            <p className="text-zinc-600 text-xs mt-2">{jobDescription.length} characters — more detail = better results</p>
+            <p style={{ fontSize: '12px', color: '#999', marginTop: '6px' }}>
+              {jobDescription.length} characters — more detail = better results
+            </p>
           </div>
 
-          {error && <p className="text-red-400 text-sm">{error}</p>}
+          {error && (
+            <p style={{ color: '#dc2626', fontSize: '14px' }}>{error}</p>
+          )}
 
           <button
             onClick={handleAnalyse}
             disabled={loading}
-            style={{ width: '100%', background: '#2563eb', color: '#fff', fontWeight: 700, fontSize: '16px', padding: '16px', borderRadius: '12px', border: 'none', cursor: loading ? 'not-allowed' : 'pointer', opacity: loading ? 0.8 : 1 }}
+            style={{
+              width: '100%',
+              background: loading ? '#666' : '#0a0a0a',
+              color: '#fff',
+              fontWeight: 700,
+              fontSize: '16px',
+              padding: '14px',
+              borderRadius: '10px',
+              border: 'none',
+              cursor: loading ? 'not-allowed' : 'pointer',
+            }}
           >
             {loading ? '🤖 Analysing with AI...' : '✨ Analyse My CV'}
           </button>
 
           {loading && (
-            <div className="text-center py-4">
-              <p className="text-zinc-400 text-sm">This takes about 15-20 seconds...</p>
+            <div style={{ textAlign: 'center' }}>
+              <p style={{ color: '#999', fontSize: '14px' }}>This takes about 15-20 seconds...</p>
             </div>
           )}
         </div>

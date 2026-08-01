@@ -1,6 +1,7 @@
 import { auth } from "@/lib/auth"
 import { redirect } from "next/navigation"
 import { prisma } from "@/lib/prisma"
+import CopyButton from '../CopyButton'
 
 export default async function ResultsPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params
@@ -13,55 +14,64 @@ export default async function ResultsPage({ params }: { params: Promise<{ id: st
 
   if (!analysis) redirect("/dashboard")
 
-  const scoreColor = analysis.matchScore >= 80 ? '#22c55e' : analysis.matchScore >= 60 ? '#eab308' : '#ef4444'
+  const scoreColor = analysis.matchScore >= 80 ? '#16a34a' : analysis.matchScore >= 60 ? '#ca8a04' : '#dc2626'
+  const scoreBg = analysis.matchScore >= 80 ? '#f0fdf4' : analysis.matchScore >= 60 ? '#fefce8' : '#fef2f2'
+  const scoreLabel = analysis.matchScore >= 80 ? '🟢 Strong match — apply with confidence!' : analysis.matchScore >= 60 ? '🟡 Good match — a few tweaks will help' : '🔴 Weak match — use the rewritten CV below'
 
   return (
-    <div className="min-h-screen bg-black text-white">
-      <nav className="border-b border-zinc-800 px-6 py-4 flex justify-between items-center">
-        <a href="/dashboard" className="text-xl font-black">
-          Tailor<span className="text-blue-500">CV</span>
+    <div style={{ minHeight: '100vh', background: '#fafafa', color: '#0a0a0a' }}>
+
+      {/* Navbar */}
+      <nav style={{ background: '#fff', borderBottom: '1px solid #f0f0f0', padding: '0 32px', display: 'flex', justifyContent: 'space-between', alignItems: 'center', height: '60px' }}>
+        <a href="/dashboard" style={{ fontWeight: 800, fontSize: '18px', letterSpacing: '-0.5px', textDecoration: 'none', color: '#0a0a0a' }}>
+          Tailor<span style={{ color: '#2563eb' }}>CV</span>
         </a>
-        <a href="/analyse" className="text-xs text-zinc-400 hover:text-white transition-colors">
+        <a href="/analyse" style={{ fontSize: '13px', background: '#0a0a0a', color: '#fff', padding: '8px 16px', borderRadius: '8px', textDecoration: 'none', fontWeight: 600 }}>
           + New Analysis
         </a>
       </nav>
 
-      <div className="max-w-4xl mx-auto px-6 py-12">
+      <div style={{ maxWidth: '800px', margin: '0 auto', padding: '40px 24px' }}>
 
-        <div className="mb-10">
-          <p className="text-zinc-500 text-sm mb-1">{analysis.companyName || 'Company'}</p>
-          <h1 className="text-3xl font-black mb-6">{analysis.jobTitle}</h1>
-
-          <div className="bg-zinc-900 border border-zinc-800 rounded-2xl p-8 text-center mb-8">
-            <div style={{ fontSize: '72px', fontWeight: 900, color: scoreColor, lineHeight: 1 }}>
-              {analysis.matchScore}%
-            </div>
-            <p className="text-zinc-400 mt-2 text-sm">CV Match Score</p>
-            <p className="text-zinc-600 text-xs mt-1">
-              {analysis.matchScore >= 80 ? '🟢 Strong match — apply with confidence!' :
-               analysis.matchScore >= 60 ? '🟡 Good match — a few tweaks will help' :
-               '🔴 Weak match — use the rewritten CV below'}
-            </p>
-          </div>
+        {/* Header */}
+        <div style={{ marginBottom: '28px' }}>
+          {analysis.companyName && (
+            <p style={{ fontSize: '14px', color: '#999', marginBottom: '4px' }}>{analysis.companyName}</p>
+          )}
+          <h1 style={{ fontSize: '28px', fontWeight: 800, letterSpacing: '-1px' }}>{analysis.jobTitle}</h1>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-10">
-          <div className="bg-zinc-900 border border-zinc-800 rounded-2xl p-6">
-            <h3 className="font-bold text-green-400 mb-4">✅ Matched Keywords ({analysis.matchedKeywords.length})</h3>
-            <div className="flex flex-wrap gap-2">
+        {/* Match Score */}
+        <div style={{ background: scoreBg, border: `1px solid ${scoreColor}30`, borderRadius: '16px', padding: '32px', textAlign: 'center', marginBottom: '24px' }}>
+          <div style={{ fontSize: '80px', fontWeight: 900, color: scoreColor, lineHeight: 1, letterSpacing: '-3px' }}>
+            {analysis.matchScore}%
+          </div>
+          <p style={{ color: '#666', fontSize: '14px', marginTop: '8px' }}>CV Match Score</p>
+          <p style={{ color: scoreColor, fontSize: '14px', fontWeight: 600, marginTop: '8px' }}>{scoreLabel}</p>
+        </div>
+
+        {/* Keywords Grid */}
+        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px', marginBottom: '24px' }}>
+          <div style={{ background: '#fff', border: '1px solid #f0f0f0', borderRadius: '16px', padding: '24px' }}>
+            <h3 style={{ fontSize: '15px', fontWeight: 700, color: '#16a34a', marginBottom: '16px' }}>
+              ✅ Matched Keywords ({analysis.matchedKeywords.length})
+            </h3>
+            <div style={{ display: 'flex', flexWrap: 'wrap', gap: '8px' }}>
               {analysis.matchedKeywords.map((kw, i) => (
-                <span key={`matched-${i}`} style={{ background: '#14532d', color: '#86efac', fontSize: '12px', padding: '4px 10px', borderRadius: '20px' }}>
+                <span key={i} style={{ background: '#f0fdf4', color: '#16a34a', fontSize: '12px', padding: '4px 10px', borderRadius: '20px', fontWeight: 500 }}>
                   {kw}
                 </span>
               ))}
             </div>
           </div>
 
-          <div className="bg-zinc-900 border border-zinc-800 rounded-2xl p-6">
-            <h3 className="font-bold text-red-400 mb-4">❌ Missing Keywords ({analysis.missingKeywords.length})</h3>
-            <div className="flex flex-wrap gap-2">
+          <div style={{ background: '#fff', border: '1px solid #f0f0f0', borderRadius: '16px', padding: '24px' }}>
+            <h3 style={{ fontSize: '15px', fontWeight: 700, color: '#dc2626', marginBottom: '16px' }}>
+              ❌ Missing Keywords ({analysis.missingKeywords.length})
+            </h3>
+            <div style={{ display: 'flex', flexWrap: 'wrap', gap: '8px' }}>
               {analysis.missingKeywords.map((kw, i) => (
-                <span key={`missing-${i}`} style={{ background: '#450a0a', color: '#fca5a5', fontSize: '12px', padding: '4px 10px', borderRadius: '20px' }}>
+                <span key={i} style={{ background: '#fef2f2', color: '#dc2626', fontSize: '12px', padding: '4px 10px', borderRadius: '20px', fontWeight: 500 }}>
                   {kw}
                 </span>
               ))}
@@ -69,34 +79,39 @@ export default async function ResultsPage({ params }: { params: Promise<{ id: st
           </div>
         </div>
 
+        {/* Skills Gap */}
         {analysis.skillsGap.length > 0 && (
-          <div className="bg-zinc-900 border border-zinc-800 rounded-2xl p-6 mb-10">
-            <h3 className="font-bold text-yellow-400 mb-4">⚠️ Skills Gap</h3>
-            <ul className="space-y-2">
+          <div style={{ background: '#fff', border: '1px solid #f0f0f0', borderRadius: '16px', padding: '24px', marginBottom: '24px' }}>
+            <h3 style={{ fontSize: '15px', fontWeight: 700, color: '#ca8a04', marginBottom: '16px' }}>⚠️ Skills Gap</h3>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
               {analysis.skillsGap.map((skill, i) => (
-                <li key={`skill-${i}`} className="text-zinc-400 text-sm flex items-start gap-2">
-                  <span className="text-yellow-500 mt-0.5">→</span>
+                <div key={i} style={{ display: 'flex', gap: '10px', fontSize: '14px', color: '#666' }}>
+                  <span style={{ color: '#ca8a04' }}>→</span>
                   {skill}
-                </li>
+                </div>
               ))}
-            </ul>
+            </div>
           </div>
         )}
 
-        <div className="bg-zinc-900 border border-zinc-800 rounded-2xl p-6 mb-6">
-          <div className="flex justify-between items-center mb-4">
-            <h3 className="font-bold text-blue-400">📄 Rewritten CV for this Role</h3>
+        {/* Rewritten CV */}
+        <div style={{ background: '#fff', border: '1px solid #f0f0f0', borderRadius: '16px', padding: '24px', marginBottom: '24px' }}>
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px' }}>
+            <h3 style={{ fontSize: '15px', fontWeight: 700, color: '#2563eb' }}>📄 Rewritten CV for this Role</h3>
+            <CopyButton text={analysis.rewrittenCV} />
           </div>
-          <pre className="text-zinc-300 text-sm leading-relaxed whitespace-pre-wrap font-sans">
+          <pre style={{ fontSize: '13px', color: '#444', lineHeight: 1.7, whiteSpace: 'pre-wrap', fontFamily: 'inherit' }}>
             {analysis.rewrittenCV}
           </pre>
         </div>
 
-        <div className="bg-zinc-900 border border-zinc-800 rounded-2xl p-6">
-          <div className="flex justify-between items-center mb-4">
-            <h3 className="font-bold text-purple-400">✉️ Cover Letter</h3>
+        {/* Cover Letter */}
+        <div style={{ background: '#fff', border: '1px solid #f0f0f0', borderRadius: '16px', padding: '24px' }}>
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px' }}>
+            <h3 style={{ fontSize: '15px', fontWeight: 700, color: '#7c3aed' }}>✉️ Cover Letter</h3>
+            <CopyButton text={analysis.coverLetter} />
           </div>
-          <pre className="text-zinc-300 text-sm leading-relaxed whitespace-pre-wrap font-sans">
+          <pre style={{ fontSize: '13px', color: '#444', lineHeight: 1.7, whiteSpace: 'pre-wrap', fontFamily: 'inherit' }}>
             {analysis.coverLetter}
           </pre>
         </div>

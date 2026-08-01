@@ -10,7 +10,6 @@ interface Props {
 export default function CVUpload({ hasExistingCV, existingFileName }: Props) {
   const [uploading, setUploading] = useState(false)
   const [error, setError] = useState('')
-  const [dragOver, setDragOver] = useState(false)
   const fileRef = useRef<HTMLInputElement>(null)
 
   async function handleFile(file: File) {
@@ -18,88 +17,70 @@ export default function CVUpload({ hasExistingCV, existingFileName }: Props) {
       setError('Please upload a PDF file')
       return
     }
-
     setUploading(true)
     setError('')
-
     const formData = new FormData()
     formData.append('cv', file)
-
-    const res = await fetch('/api/cv', {
-      method: 'POST',
-      body: formData,
-    })
-
+    const res = await fetch('/api/cv', { method: 'POST', body: formData })
     const data = await res.json()
-
     if (data.success) {
       window.location.reload()
     } else {
       setError('Upload failed. Please try again.')
     }
-
     setUploading(false)
   }
 
   return (
-    <div className="w-full">
+    <div style={{ width: '100%' }}>
       {hasExistingCV && (
-        <div className="flex items-center gap-3 bg-blue-500/10 border border-blue-500/30 rounded-xl p-4 mb-4">
-          <span className="text-2xl">📄</span>
-          <div className="flex-1">
-            <p className="text-white text-sm font-medium">{existingFileName}</p>
-            <p className="text-blue-400 text-xs mt-0.5">Active CV — upload a new one to replace</p>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '12px', background: '#f0fdf4', border: '1px solid #bbf7d0', borderRadius: '10px', padding: '12px 16px', marginBottom: '16px' }}>
+          <span style={{ fontSize: '20px' }}>📄</span>
+          <div style={{ flex: 1 }}>
+            <p style={{ fontSize: '14px', fontWeight: 600, color: '#0a0a0a' }}>{existingFileName}</p>
+            <p style={{ fontSize: '12px', color: '#16a34a', marginTop: '2px' }}>Active CV</p>
           </div>
         </div>
       )}
 
-<label
-  htmlFor="cv-upload"
-  className={`block border-2 border-dashed rounded-xl p-10 text-center cursor-pointer transition-all duration-300 ${
-    dragOver
-      ? 'border-blue-500 bg-blue-500/10'
-      : 'border-zinc-700 hover:border-zinc-500 bg-zinc-900/50'
-  }`}
-  onDragOver={(e) => { e.preventDefault(); setDragOver(true) }}
-  onDragLeave={() => setDragOver(false)}
-  onDrop={(e) => {
-    e.preventDefault()
-    setDragOver(false)
-    const file = e.dataTransfer.files[0]
-    if (file) handleFile(file)
-  }}
->
-<div style={{
-  display: 'inline-flex',
-  alignItems: 'center',
-  gap: '8px',
-  background: '#2563eb',
-  color: '#fff',
-  fontSize: '14px',
-  fontWeight: 600,
-  padding: '12px 24px',
-  borderRadius: '12px',
-  cursor: 'pointer',
-}}>
-  <span>📁</span>
-  <span>{uploading ? 'Uploading...' : 'Choose PDF File'}</span>
-</div>
+      <label
+        htmlFor="cv-upload"
+        style={{
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'space-between',
+          border: '1px solid #e8e8e8',
+          borderRadius: '10px',
+          padding: '14px 16px',
+          cursor: 'pointer',
+          background: '#fafafa',
+        }}
+      >
+        <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+          <span style={{ fontSize: '20px' }}>📎</span>
+          <div>
+            <p style={{ fontSize: '14px', fontWeight: 600, color: '#0a0a0a' }}>
+              {uploading ? 'Uploading...' : hasExistingCV ? 'Replace CV' : 'Upload CV'}
+            </p>
+            <p style={{ fontSize: '12px', color: '#999', marginTop: '1px' }}>PDF files only</p>
+          </div>
+        </div>
+        <div style={{ background: '#0a0a0a', color: '#fff', fontSize: '13px', fontWeight: 600, padding: '8px 16px', borderRadius: '8px' }}>
+          {uploading ? 'Uploading...' : 'Choose File'}
+        </div>
+        <input
+          id="cv-upload"
+          type="file"
+          accept=".pdf"
+          style={{ display: 'none' }}
+          onChange={(e) => {
+            const file = e.target.files?.[0]
+            if (file) handleFile(file)
+          }}
+        />
+      </label>
 
-  <input
-  id="cv-upload"
-  type="file"
-  accept=".pdf"
-  style={{ display: 'none' }}
-    onChange={(e) => {
-      const file = e.target.files?.[0]
-      if (file) handleFile(file)
-    }}
-  />
-</label>
-
-      {error && (
-        <p className="text-red-400 text-sm mt-3">{error}</p>
-      )}
+      {error && <p style={{ color: '#dc2626', fontSize: '13px', marginTop: '8px' }}>{error}</p>}
     </div>
   )
-      }
+}
