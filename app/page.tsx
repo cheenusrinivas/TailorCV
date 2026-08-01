@@ -17,11 +17,9 @@ export default async function Home() {
           Get Started
         </a>
       </nav>
-
       {/* Hero */}
-      {/* Hero */}
-      <div style={{ background: 'radial-gradient(circle, #e8f0fe 1px, transparent 1px)', backgroundSize: '24px 24px', backgroundColor: '#fff' }}>
-      <div style={{ maxWidth: '760px', margin: '0 auto', padding: '100px 32px 80px', textAlign: 'center' }}>
+<div style={{ background: 'radial-gradient(circle, #d0e4ff 1px, transparent 1px)', backgroundSize: '28px 28px', backgroundColor: '#ffffff', position: 'relative' }}>
+<div style={{ maxWidth: '760px', margin: '0 auto', padding: '100px 32px 80px', textAlign: 'center', position: 'relative', zIndex: 1 }}>
         <div style={{ display: 'inline-block', background: '#f0f7ff', color: '#2563eb', fontSize: '12px', fontWeight: 600, padding: '6px 14px', borderRadius: '20px', marginBottom: '24px', letterSpacing: '0.05em' }}>
           Powered by Gemini AI
         </div>
